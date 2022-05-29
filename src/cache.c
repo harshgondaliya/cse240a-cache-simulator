@@ -152,11 +152,13 @@ icache_access(uint32_t addr)
         if((icache[(iIndex*icacheAssoc)+i] ) == iTag){
           iSuccess = 1;
           // printf("tag found\n");
-          icacheLRU[(iIndex*icacheAssoc)+i] = icacheAssoc-1;
-          for(int k=0; k<icacheAssoc; k++){
-            if((k != i) && (icacheLRU[(iIndex*icacheAssoc)+k]!=9)){
-              if(icacheLRU[(iIndex*icacheAssoc)+k]!=0){
-                icacheLRU[(iIndex*icacheAssoc)+k] = icacheLRU[(iIndex*icacheAssoc)+k]-1;
+          if(!(icacheLRU[(iIndex*icacheAssoc)+i] == icacheAssoc-1)){
+            icacheLRU[(iIndex*icacheAssoc)+i] = icacheAssoc-1;
+            for(int k=0; k<icacheAssoc; k++){
+              if((k != i) && (icacheLRU[(iIndex*icacheAssoc)+k]!=9)){
+                if(icacheLRU[(iIndex*icacheAssoc)+k]!=0){
+                  icacheLRU[(iIndex*icacheAssoc)+k] = icacheLRU[(iIndex*icacheAssoc)+k]-1;
+                }
               }
             }
           }
@@ -173,11 +175,13 @@ icache_access(uint32_t addr)
         // printf("icacheLRU[(iIndex*icacheAssoc)+j]: %d\n", icacheLRU[(iIndex*icacheAssoc)+j]);
         if(icacheLRU[(iIndex*icacheAssoc)+j] == 9){ // free space available in L1
           icache[(iIndex*icacheAssoc)+j] = iTag;
-          icacheLRU[(iIndex*icacheAssoc)+j] = icacheAssoc-1;
-          for(int k=0; k<icacheAssoc; k++){
-            if((k != j) && (icacheLRU[(iIndex*icacheAssoc)+k]!=9)){
-              if(icacheLRU[(iIndex*icacheAssoc)+k]!=0){
-                icacheLRU[(iIndex*icacheAssoc)+k] = icacheLRU[(iIndex*icacheAssoc)+k]-1;
+          if(!(icacheLRU[(iIndex*icacheAssoc)+j] == icacheAssoc-1)){
+            icacheLRU[(iIndex*icacheAssoc)+j] = icacheAssoc-1;
+            for(int k=0; k<icacheAssoc; k++){
+              if((k != j) && (icacheLRU[(iIndex*icacheAssoc)+k]!=9)){
+                if(icacheLRU[(iIndex*icacheAssoc)+k]!=0){
+                  icacheLRU[(iIndex*icacheAssoc)+k] = icacheLRU[(iIndex*icacheAssoc)+k]-1;
+                }
               }
             }
           }
@@ -191,11 +195,13 @@ icache_access(uint32_t addr)
           // printf("icacheLRU[(iIndex*icacheAssoc)+j]: %d\n", icacheLRU[(iIndex*icacheAssoc)+j]);
           if(icacheLRU[(iIndex*icacheAssoc)+j] == 0){ // replacement in L1
             icache[(iIndex*icacheAssoc)+j] = iTag;
-            icacheLRU[(iIndex*icacheAssoc)+j] = icacheAssoc-1;
-            for(int k=0; k<icacheAssoc; k++){
-              if((k != j) && (icacheLRU[(iIndex*icacheAssoc)+k]!=9)){
-                if(icacheLRU[(iIndex*icacheAssoc)+k]!=0){
-                  icacheLRU[(iIndex*icacheAssoc)+k]=icacheLRU[(iIndex*icacheAssoc)+k]-1;
+            if(!(icacheLRU[(iIndex*icacheAssoc)+j] == icacheAssoc-1)){
+              icacheLRU[(iIndex*icacheAssoc)+j] = icacheAssoc-1;
+              for(int k=0; k<icacheAssoc; k++){
+                if((k != j) && (icacheLRU[(iIndex*icacheAssoc)+k]!=9)){
+                  if(icacheLRU[(iIndex*icacheAssoc)+k]!=0){
+                    icacheLRU[(iIndex*icacheAssoc)+k]=icacheLRU[(iIndex*icacheAssoc)+k]-1;
+                  }
                 }
               }
             }
@@ -246,22 +252,25 @@ dcache_access(uint32_t addr)
     // printf("hi\n");
     dcacheRefs++;
     for(int i=0; i<dcacheAssoc; i++){
+      // printf("Checking for hit\n");
       // printf("dcacheLRU[(dIndex*dcacheAssoc)+i]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+i]);
       if(dcacheLRU[(dIndex*dcacheAssoc)+i] < 9){
         if((dcache[(dIndex*dcacheAssoc)+i] ) == dTag){
           dSuccess = 1;
-          dcacheLRU[(dIndex*dcacheAssoc)+i] = dcacheAssoc-1;
-          for(int k=0; k<dcacheAssoc; k++){
-            if((k != i) && (dcacheLRU[(dIndex*dcacheAssoc)+k]!=9)){
-              // printf("dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
-              if(dcacheLRU[(dIndex*dcacheAssoc)+k]!=0){
-                // printf("Before: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
-                dcacheLRU[(dIndex*dcacheAssoc)+k]=dcacheLRU[(dIndex*dcacheAssoc)+k]-1;
-                // printf("After: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+          if(!(dcacheLRU[(dIndex*dcacheAssoc)+i] == dcacheAssoc-1)){
+            dcacheLRU[(dIndex*dcacheAssoc)+i] = dcacheAssoc-1;
+            for(int k=0; k<dcacheAssoc; k++){
+              if((k != i) && (dcacheLRU[(dIndex*dcacheAssoc)+k]!=9)){
+                // printf("dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+                if(dcacheLRU[(dIndex*dcacheAssoc)+k]!=0){
+                  // printf("Before: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+                  dcacheLRU[(dIndex*dcacheAssoc)+k]=dcacheLRU[(dIndex*dcacheAssoc)+k]-1;
+                  // printf("After: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+                }
               }
             }
           }
-          // printf("tag found\n");
+          // printf("tag found at index %d\n", i);
           break;
         }
       }
@@ -272,30 +281,11 @@ dcache_access(uint32_t addr)
       penalty += l2cache_access(addr);
       uint32_t l1ReplacementSuccess = 0;
       for(int j=0; j<dcacheAssoc; j++){
+        // printf("Search for empty slot\n");
         // printf("dcacheLRU[(dIndex*dcacheAssoc)+j]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+j]);
         if(dcacheLRU[(dIndex*dcacheAssoc)+j] == 9){ // free space available in L1
           dcache[(dIndex*dcacheAssoc)+j] = dTag;
-          dcacheLRU[(dIndex*dcacheAssoc)+j] = dcacheAssoc-1;
-          for(int k=0; k<dcacheAssoc; k++){
-            if((k != j) && (dcacheLRU[(dIndex*dcacheAssoc)+k]!=9)){
-              // printf("dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
-              if(dcacheLRU[(dIndex*dcacheAssoc)+k]!=0){
-                // printf("Before: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
-                dcacheLRU[(dIndex*dcacheAssoc)+k]=dcacheLRU[(dIndex*dcacheAssoc)+k]-1;
-                // printf("After: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
-              }
-            }
-          }
-          // printf("tag filled\n");
-          l1ReplacementSuccess = 1;
-          break;
-        }
-      }
-      if(!l1ReplacementSuccess){
-        for(int j=0; j<dcacheAssoc; j++){
-        // printf("dcacheLRU[(dIndex*dcacheAssoc)+j]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+j]);
-          if(dcacheLRU[(dIndex*dcacheAssoc)+j] == 0){ // replacement in L1
-            dcache[(dIndex*dcacheAssoc)+j] = dTag;
+          if(!(dcacheLRU[(dIndex*dcacheAssoc)+j] == dcacheAssoc-1)){
             dcacheLRU[(dIndex*dcacheAssoc)+j] = dcacheAssoc-1;
             for(int k=0; k<dcacheAssoc; k++){
               if((k != j) && (dcacheLRU[(dIndex*dcacheAssoc)+k]!=9)){
@@ -307,7 +297,32 @@ dcache_access(uint32_t addr)
                 }
               }
             }
-            // printf("tag replaced\n");
+          }
+          // printf("tag filled at index %d\n",j);
+          l1ReplacementSuccess = 1;
+          break;
+        }
+      }
+      if(!l1ReplacementSuccess){
+        for(int j=0; j<dcacheAssoc; j++){
+          // printf("Search for replacement\n");
+          // printf("dcacheLRU[(dIndex*dcacheAssoc)+j]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+j]);
+          if(dcacheLRU[(dIndex*dcacheAssoc)+j] == 0){ // replacement in L1
+            dcache[(dIndex*dcacheAssoc)+j] = dTag;
+            if(!(dcacheLRU[(dIndex*dcacheAssoc)+j] == dcacheAssoc-1)){
+              dcacheLRU[(dIndex*dcacheAssoc)+j] = dcacheAssoc-1;
+              for(int k=0; k<dcacheAssoc; k++){
+                if((k != j) && (dcacheLRU[(dIndex*dcacheAssoc)+k]!=9)){
+                  // printf("dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+                  if(dcacheLRU[(dIndex*dcacheAssoc)+k]!=0){
+                    // printf("Before: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+                    dcacheLRU[(dIndex*dcacheAssoc)+k]=dcacheLRU[(dIndex*dcacheAssoc)+k]-1;
+                    // printf("After: dcacheLRU[(dIndex*dcacheAssoc)+k]: %d\n", dcacheLRU[(dIndex*dcacheAssoc)+k]);
+                  }
+                }
+              }
+            }
+            // printf("tag replaced at index %d\n", j);
             break;
           }
         }
@@ -357,11 +372,13 @@ l2cache_access(uint32_t addr)
       if(l2cacheLRU[(l2Index*l2cacheAssoc)+i] < 9){
         if((l2cache[(l2Index*l2cacheAssoc)+i] ) == l2Tag){
           l2Success = 1;
-          l2cacheLRU[(l2Index*l2cacheAssoc)+i] = l2cacheAssoc-1;
-          for(int k=0; k<l2cacheAssoc; k++){
-            if((k != i) && (l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=9)){
-              if(l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=0){
-                l2cacheLRU[(l2Index*l2cacheAssoc)+k]=l2cacheLRU[(l2Index*l2cacheAssoc)+k]-1;
+          if(!(l2cacheLRU[(l2Index*l2cacheAssoc)+i] == l2cacheAssoc-1)){
+            l2cacheLRU[(l2Index*l2cacheAssoc)+i] = l2cacheAssoc-1;
+            for(int k=0; k<l2cacheAssoc; k++){
+              if((k != i) && (l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=9)){
+                if(l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=0){
+                  l2cacheLRU[(l2Index*l2cacheAssoc)+k]=l2cacheLRU[(l2Index*l2cacheAssoc)+k]-1;
+                }
               }
             }
           }
@@ -376,11 +393,13 @@ l2cache_access(uint32_t addr)
       for(int j=0; j<l2cacheAssoc; j++){
         if(l2cacheLRU[(l2Index*l2cacheAssoc)+j] == 9){ // free space available in L1
           l2cache[(l2Index*l2cacheAssoc)+j] = l2Tag;
-          l2cacheLRU[(l2Index*l2cacheAssoc)+j] = l2cacheAssoc-1;
-          for(int k=0; k<l2cacheAssoc; k++){
-            if((k != j) && (l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=9)){
-              if(l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=0){
-                l2cacheLRU[(l2Index*l2cacheAssoc)+k]=l2cacheLRU[(l2Index*l2cacheAssoc)+k]-1;
+          if(!(l2cacheLRU[(l2Index*l2cacheAssoc)+j] == l2cacheAssoc-1)){
+            l2cacheLRU[(l2Index*l2cacheAssoc)+j] = l2cacheAssoc-1;
+            for(int k=0; k<l2cacheAssoc; k++){
+              if((k != j) && (l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=9)){
+                if(l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=0){
+                  l2cacheLRU[(l2Index*l2cacheAssoc)+k]=l2cacheLRU[(l2Index*l2cacheAssoc)+k]-1;
+                }
               }
             }
           }
@@ -392,11 +411,13 @@ l2cache_access(uint32_t addr)
         for(int j=0; j<l2cacheAssoc; j++){
           if(l2cacheLRU[(l2Index*l2cacheAssoc)+j] == 0){ // replacement in L1
             l2cache[(l2Index*l2cacheAssoc)+j] = l2Tag;
-            l2cacheLRU[(l2Index*l2cacheAssoc)+j] = l2cacheAssoc-1;
-            for(int k=0; k<l2cacheAssoc; k++){
-              if((k != j) && (l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=9)){
-                if(l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=0){
-                  l2cacheLRU[(l2Index*l2cacheAssoc)+k]=l2cacheLRU[(l2Index*l2cacheAssoc)+k]-1;
+            if(!(l2cacheLRU[(l2Index*l2cacheAssoc)+j] == l2cacheAssoc-1)){
+              l2cacheLRU[(l2Index*l2cacheAssoc)+j] = l2cacheAssoc-1;
+              for(int k=0; k<l2cacheAssoc; k++){
+                if((k != j) && (l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=9)){
+                  if(l2cacheLRU[(l2Index*l2cacheAssoc)+k]!=0){
+                    l2cacheLRU[(l2Index*l2cacheAssoc)+k]=l2cacheLRU[(l2Index*l2cacheAssoc)+k]-1;
+                  }
                 }
               }
             }
